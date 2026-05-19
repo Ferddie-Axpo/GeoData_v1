@@ -1,0 +1,38 @@
+{
+  "america": [
+    "New York",
+    "Los Angeles",
+    "Chicago",
+    "Houston",
+    "Miami",
+    "Toronto",
+    "Mexico City",
+    "São Paulo",
+    "Buenos Aires",
+    "Lima"
+  ],
+  "Asia": [
+    "Tokyo",
+    "Beijing",
+    "Shanghai",
+    "Mumbai",
+    "Delhi",
+    "Seoul",
+    "Bangkok",
+    "Singapore",
+    "Jakarta",
+    "Kuala Lumpur"
+  ],
+  "Europe": [
+    "London",
+    "Paris",
+    "Berlin",
+    "Madrid",
+    "Rome",
+    "Amsterdam",
+    "Vienna",
+    "Stockholm",
+    "Warsaw",
+    "Prague"
+  ]
+}
