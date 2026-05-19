@@ -1,1 +1,15 @@
-{\n  "name": "testing2-webapp",\n  "version": "1.0.0",\n  "description": "Simple Express WebApp listing continents and cities",\n  "main": "server.js",\n  "scripts": {\n    "start": "node server.js"\n  },\n  "dependencies": {\n    "express": "^4.18.2"\n  },\n  "engines": {\n    "node": ">=14"\n  }\n}
+{
+  "name": "testing2-webapp",
+  "version": "1.0.0",
+  "description": "Simple Express WebApp listing continents and cities",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
