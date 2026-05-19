@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Continental Distance Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .continents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .continent-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .continent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .continent-card h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .cities-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .cities-section h3 {
+            color: #333;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .city-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .city-item {
+            background: #f5f5f5;
+            padding: 0.75rem;
+            border-radius: 6px;
+            color: #333;
+            font-weight: 500;
+            border-left: 4px solid #667eea;
+        }
+
+        .distances-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #eee;
+        }
+
+        .distances-section h3 {
+            color: #333;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .distance-item {
+            background: #f0f4ff;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid #764ba2;
+        }
+
+        .distance-item .route {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .distance-item .distance-value {
+            color: #764ba2;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .distance-item .distance-label {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .stats-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .info-section {
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            color: #333;
+        }
+
+        .info-section h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .info-section p {
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+            color: #666;
+        }
+
+        .info-section ul {
+            margin-left: 1.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .info-section li {
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .continents-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 Continental Distance Calculator</h1>
+
+        <div class="continents-grid" id="continentsContainer"></div>
+
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalDistances">0</div>
+                    <div class="stat-label">Total Distances Calculated</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="longestDistance">0</div>
+                    <div class="stat-label">Longest Distance (km)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="shortestDistance">0</div>
+                    <div class="stat-label">Shortest Distance (km)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="averageDistance">0</div>
+                    <div class="stat-label">Average Distance (km)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>📊 About This Calculator</h2>
+            <p>This application calculates distances between the first 3 cities in each continent using the <strong>Haversine formula</strong>, which computes the great-circle distance between two points on a sphere given their latitudes and longitudes.</p>
+            <p><strong>Features:</strong></p>
+            <ul>
+                <li>Calculates distances between all city pairs in each continent (3 cities = 3 distances per continent)</li>
+                <li>Uses real geographical coordinates for accurate distance measurements</li>
+                <li>Provides continental statistics and distance analytics</li>
+                <li>Displays results in both kilometers and miles</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // City coordinates (latitude, longitude)
+        const cityCoordinates = {
+            // Americas
+            "New York": { lat: 40.7128, lng: -74.0060 },
+            "Los Angeles": { lat: 34.0522, lng: -118.2437 },
+            "Chicago": { lat: 41.8781, lng: -87.6298 },
+            "Houston": { lat: 29.7604, lng: -95.3698 },
+            "Miami": { lat: 25.7617, lng: -80.1918 },
+            "Toronto": { lat: 43.6532, lng: -79.3832 },
+            "Mexico City": { lat: 19.4326, lng: -99.1332 },
+            "São Paulo": { lat: -23.5505, lng: -46.6333 },
+            "Buenos Aires": { lat: -34.6037, lng: -58.3816 },
+            "Lima": { lat: -12.0464, lng: -77.0428 },
+            
+            // Asia
+            "Tokyo": { lat: 35.6762, lng: 139.6503 },
+            "Beijing": { lat: 39.9042, lng: 116.4074 },
+            "Shanghai": { lat: 31.2304, lng: 121.4737 },
+            "Mumbai": { lat: 19.0760, lng: 72.8777 },
+            "Delhi": { lat: 28.7041, lng: 77.1025 },
+            "Seoul": { lat: 37.5665, lng: 126.9780 },
+            "Bangkok": { lat: 13.7563, lng: 100.5018 },
+            "Singapore": { lat: 1.3521, lng: 103.8198 },
+            "Jakarta": { lat: -6.2088, lng: 106.8456 },
+            "Kuala Lumpur": { lat: 3.1390, lng: 101.6869 },
+            
+            // Europe
+            "London": { lat: 51.5074, lng: -0.1278 },
+            "Paris": { lat: 48.8566, lng: 2.3522 },
+            "Berlin": { lat: 52.5200, lng: 13.4050 },
+            "Madrid": { lat: 40.4168, lng: -3.7038 },
+            "Rome": { lat: 41.9028, lng: 12.4964 },
+            "Amsterdam": { lat: 52.3676, lng: 4.9041 },
+            "Vienna": { lat: 48.2082, lng: 16.3738 },
+            "Stockholm": { lat: 59.3293, lng: 18.0686 },
+            "Warsaw": { lat: 52.2297, lng: 21.0122 },
+            "Prague": { lat: 50.0755, lng: 14.4378 }
+        };
+
+        // Haversine formula to calculate distance between two coordinates
+        function calculateDistance(coord1, coord2) {
+            const R = 6371; // Earth's radius in kilometers
+            const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
+            const dLng = (coord2.lng - coord1.lng) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(coord1.lat * Math.PI / 180) * Math.cos(coord2.lat * Math.PI / 180) *
+                      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        // Calculate distances between all pairs of first 3 cities
+        function calculateContinentDistances(cities) {
+            const firstThree = cities.slice(0, 3);
+            const distances = [];
+
+            for (let i = 0; i < firstThree.length; i++) {
+                for (let j = i + 1; j < firstThree.length; j++) {
+                    const city1 = firstThree[i];
+                    const city2 = firstThree[j];
+                    const distance = calculateDistance(cityCoordinates[city1], cityCoordinates[city2]);
+                    distances.push({
+                        from: city1,
+                        to: city2,
+                        distance: distance.toFixed(2),
+                        miles: (distance * 0.621371).toFixed(2)
+                    });
+                }
+            }
+
+            return distances;
+        }
+
+        // Create continent cards
+        function renderContinents(data) {
+            const container = document.getElementById('continentsContainer');
+            let allDistances = [];
+
+            Object.keys(data).forEach(continent => {
+                const cities = data[continent];
+                const distances = calculateContinentDistances(cities);
+                const firstThree = cities.slice(0, 3);
+
+                allDistances = allDistances.concat(distances);
+
+                const card = document.createElement('div');
+                card.className = 'continent-card';
+
+                const citiesHTML = firstThree.map(city => 
+                    `<div class="city-item">${city}</div>`
+                ).join('');
+
+                const distancesHTML = distances.map(d => 
+                    `<div class="distance-item">
+                        <div class="route">${d.from} ↔ ${d.to}</div>
+                        <div class="distance-label">Distance:</div>
+                        <div class="distance-value">${d.distance} km (${d.miles} mi)</div>
+                    </div>`
+                ).join('');
+
+                card.innerHTML = `
+                    <h2>${continent}</h2>
+                    <div class="cities-section">
+                        <h3>Top 3 Cities</h3>
+                        <div class="city-list">${citiesHTML}</div>
+                    </div>
+                    <div class="distances-section">
+                        <h3>Distances</h3>
+                        ${distancesHTML}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            // Update statistics
+            updateStats(allDistances);
+        }
+
+        // Update statistics
+        function updateStats(distances) {
+            const distanceValues = distances.map(d => parseFloat(d.distance));
+            
+            document.getElementById('totalDistances').textContent = distances.length;
+            document.getElementById('longestDistance').textContent = Math.max(...distanceValues).toFixed(0);
+            document.getElementById('shortestDistance').textContent = Math.min(...distanceValues).toFixed(0);
+            document.getElementById('averageDistance').textContent = (distanceValues.reduce((a, b) => a + b, 0) / distanceValues.length).toFixed(0);
+        }
+
+        // Fetch data and render
+        async function loadData() {
+            try {
+                const response = await fetch('/api/continents');
+                const data = await response.json();
+                renderContinents(data);
+            } catch (error) {
+                console.error('Error loading data:', error);
+                // Fallback to hardcoded data
+                const fallbackData = {
+                    "america": [
+                        "New York", "Los Angeles", "Chicago", "Houston", "Miami",
+                        "Toronto", "Mexico City", "São Paulo", "Buenos Aires", "Lima"
+                    ],
+                    "Asia": [
+                        "Tokyo", "Beijing", "Shanghai", "Mumbai", "Delhi",
+                        "Seoul", "Bangkok", "Singapore", "Jakarta", "Kuala Lumpur"
+                    ],
+                    "Europe": [
+                        "London", "Paris", "Berlin", "Madrid", "Rome",
+                        "Amsterdam", "Vienna", "Stockholm", "Warsaw", "Prague"
+                    ]
+                };
+                renderContinents(fallbackData);
+            }
+        }
+
+        // Initialize
+        loadData();
+    </script>
+</body>
+</html>
